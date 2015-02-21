@@ -3,10 +3,10 @@ describe Engine do
   context 'StateOnOff being the actual state' do
 
     init_state = StateOnOff.new
-    engine = Engine.new(init_state,testing: true)
+    engine = Engine.new(init_state)
     p engine
 
-    describe 'state changes to StateOffOff' do
+    describe 'changes to StateOffOff' do
 
       it 'should notify> Cerradura Bloqueada,Puerta Cerrada' do
         off_off = StateOffOff.new
@@ -16,7 +16,7 @@ describe Engine do
       end
     end
 
-    describe 'state changes to StateOffOn' do
+    describe 'changes to StateOffOn' do
 
       it 'should notify> Cerradura Bloqueada,Puerta Abierta' do
         off_on = StateOffOn.new
@@ -26,7 +26,7 @@ describe Engine do
       end
     end
 
-    describe 'state changes to StateOnOff' do
+    describe 'changes to StateOnOff' do
 
       it 'should notify> Cerradura Activada,Puerta Cerrada' do
         on_off = StateOnOff.new
@@ -36,7 +36,7 @@ describe Engine do
       end
     end
 
-    describe 'state changes to StateOnOn' do
+    describe 'changes to StateOnOn' do
 
       it 'should notify> Cerradura Activada,Puerta Abierta' do
         on_on = StateOnOn.new
