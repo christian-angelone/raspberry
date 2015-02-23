@@ -1,10 +1,3 @@
-require 'states/state'
-require 'messages/cerradura_activada_puerta_cerrada'
-require 'messages/cerradura_activada_puerta_abierta'
-require 'messages/cerradura_bloqueada_puerta_abierta'
-require 'messages/cerradura_bloqueada_puerta_cerrada'
-require 'messages/cerradura_bloqueada_puerta_violada'
-
 class StateOnOn < State
   def eval(state)
     method = "eval_#{state.class}"
@@ -17,16 +10,19 @@ class StateOnOn < State
 
   def eval_StateOffOff
     violada false
+    reset_timeout
     CerraduraBloqueadaPuertaCerrada.new
   end
 
   def eval_StateOffOn
     violada false
-    CerraduraBloqueadaPuertaViolada.new
+    reset_timeout
+    CerraduraBloqueadaPuertaAbierta.new
   end
 
   def eval_StateOnOff
     violada false
+    reset_timeout
     CerraduraActivadaPuertaCerrada.new
   end
 

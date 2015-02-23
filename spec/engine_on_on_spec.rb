@@ -1,8 +1,13 @@
+require 'spec_helper'
+require 'require_all'
+
+require_all 'lib'
+
 describe Engine do
 
-  context 'StateOnOff being the actual state' do
+  context 'StateOnOn being the actual state' do
 
-    init_state = StateOnOff.new
+    init_state = StateOnOn.new
     engine = Engine.new(init_state)
     p engine
 
@@ -12,7 +17,7 @@ describe Engine do
         off_off = StateOffOff.new
         response = engine.change_to(off_off)
         expected_response = 'Cerradura Bloqueada,Puerta Cerrada'
-        expect(response).to eq expected_response
+        expect(response.message).to eq expected_response
       end
     end
 
@@ -22,7 +27,7 @@ describe Engine do
         off_on = StateOffOn.new
         response = engine.change_to(off_on)
         expected_response = 'Cerradura Bloqueada,Puerta Abierta'
-        expect(response).to eq expected_response
+        expect(response.message).to eq expected_response
       end
     end
 
@@ -32,7 +37,7 @@ describe Engine do
         on_off = StateOnOff.new
         response = engine.change_to(on_off)
         expected_response = 'Cerradura Activada,Puerta Cerrada'
-        expect(response).to eq expected_response
+        expect(response.message).to eq expected_response
       end
     end
 
@@ -42,7 +47,7 @@ describe Engine do
         on_on = StateOnOn.new
         response = engine.change_to(on_on)
         expected_response = 'Cerradura Activada,Puerta Abierta'
-        expect(response).to eq expected_response
+        expect(response.message).to eq expected_response
       end
     end
   end
