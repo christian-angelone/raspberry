@@ -8,7 +8,7 @@ require 'states/state_on_on'
 describe 'Engine Scenario' do
 
   describe 'puerta olvidada' do
-    it 'it should notify> Cerradura Bloqueada,Puerta Olvidada' do
+    it 'should notify> Cerradura Bloqueada,Puerta Olvidada' do
       init_state = StateOffOn.new
       engine = Engine.new(init_state,keep: true)
       20.times do
