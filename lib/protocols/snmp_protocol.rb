@@ -1,6 +1,5 @@
 require 'snmp'
 
-
 class SNMP_Protocol
   
   include SNMP
@@ -25,15 +24,13 @@ class SNMP_Protocol
     manager.close
   end
 
-  def fetch(these_nodes)
-    result = {}
-    i = 0
+  def fetch_all(these_nodes)
+    result = []
     SNMP::Manager.open(:host => @ip) do |fetching|
     
       response = fetching.get(these_nodes)
       response.each_varbind do |vb|
-        result[these_nodes[i]] = vb.value.to_s
-        i += 1
+        result << vb.value.to_s
       end
     end
     result

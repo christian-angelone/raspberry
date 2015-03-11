@@ -1,4 +1,4 @@
-require 'socket'
+require 'json'
 require 'require_all'
 require_all 'lib'
 
@@ -21,25 +21,19 @@ states = {
            ['1','1'] => StateOnOn.new
          }
 
-protocol = 
+log_actioner = StateLogActioner.new
+notifier = NotifyActioner.new(ip:'192.168.0.22',port:'7070')
+snmp_protocol = SNMP_Protocol.new('192.168.0.55')
 
-engine = Engine.new(states[[init_data[2],init_data[0]]],keep: true)
+init_data = snmp_protocol.fetch_all(nodes)
+
+engine = StateEngine.new(states[[init_data[2],init_data[0]]],keep: true)
 result = nil
 
 host_ip = Socket.ip_address_list.detect{|intf| intf.ipv4_private?}.ip_address
 
 while(true)
-data = Array.new
-SNMP::Manager.open(:host => ip) do |manager|
-
-  response = manager.get(nodes)
-
-  response.each_varbind do |vb|
-
-     data << vb.value.to_s
-
-   end
-end
+data = snmp_protocol.fetch_all(nodes)
 
 result_given = engine.change_to(states[[data[2],data[0]]])
 p result_given.message
@@ -48,20 +42,23 @@ unless result_given == result
 
   result = result_given
 
-  final_message = host_ip + ',' + Time.now.strftime("%d/%m/%Y %H:%M") + ',' +  result.message + ',' +
-            data[0] + ',' +
-            data[1] + ',' +
-            data[2] + ',' +
-            data[3] + ',' +
-            data[4] + ',' +
-            data[5] + ',' +
-            data[6] + ',' + data[7] + ',' + data[8] + ',' + data[9]   
-
-  File.open('/next_key_data/state_log.csv', 'a') { |file| file.puts(final_message) }
-
-  socket = TCPSocket.new '192.168.0.14', 7070
-  socket.puts(final_message)
-  socket.close
+  final_message = { host: host_ip,
+                    date: Time.now.strftime("%d/%m/%Y %H:%M"),
+                    status:  result.message,
+                    digital_input1: data[0],
+                    digital_input2: data[1],
+                    relay1: data[2],
+                    relay2: data[3],
+                    voltage1: data[4],
+                    voltage2: data[5],
+                    temperature1: data[6],
+                    temperature2: data[7],
+                    humidity1: data[8],
+                    humidity2: data[9]
+                 }
+  
+  log_actioner.write(final_message.to_json)
+  notifier.send(final_message.to_json)
 end
 sleep 1
 end
