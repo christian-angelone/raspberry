@@ -12,6 +12,17 @@ class HttpService < Sinatra::Base
     "Edificio Republica,Sala de Transmicion X"
   end
 
+  get '/iam/*/with/*/want/authenticate' do
+    authenticate(params[:splat][0],params[:splat][1])
+    unless @user.nil?
+      status 200
+      body 'true'
+    else
+      status 203
+      body 'false'
+    end
+   end
+
   post '/iam/*/with/*/want/pulse' do
     'pulse'    
   end
