@@ -1,44 +1,63 @@
 require 'sinatra/base'
+require 'json'
 require 'require_all'
 require_all 'lib'
 
 class HttpService < Sinatra::Base
 
+  set :bind, '0.0.0.0'
+
   def authenticate(a_username,a_password)
     @user =  UserConsultor.authenticate(a_username,a_password)
+    p @user
   end
 
   get '/info' do
-    "Edificio Republica,Sala de Transmicion X"
+    content_type :json
+    DeviceInfoConsultor.all
   end
 
   get '/iam/*/with/*/want/authenticate' do
+  
+    content_type :json
     authenticate(params[:splat][0],params[:splat][1])
-    unless @user.nil?
+    unless @user.nil?  
+      UserActioner.set_online(params[:splat][0],request.ip)
       status 200
-      body 'true'
+      body @user.to_json
     else
-      status 203
-      body 'false'
+      status 401
+      body '{"error":"usuario y/o password incorrectos"}'
     end
    end
 
-  post '/iam/*/with/*/want/pulse' do
-    'pulse'    
+  get '/iam/*/with/*/do/pulse' do
+    content_type :json
+    authenticate(params[:splat][0],params[:splat][1])
+    unless @user.nil?
+      @device ||= Device.new('192.168.0.55')
+      @device.pulse
+      status 200
+    else
+      status 203
+      body '{"error":"usuario no registrado"}'
+    end    
   end
 
   get '/iam/*/with/*/want/last_state' do
+    content_type :json
     authenticate(params[:splat][0],params[:splat][1])
     unless @user.nil?
       status 200
       body StateLogConsultor.last
     else
       status 203
-      body "Usuario no registrado"
+      body '{"error":"usuario no registrado"}'
     end
   end
 
   get '/iam/*/with/*/want/states_log' do
+    content_type :json
     authenticate(params[:splat][0],params[:splat][1])
     unless @user.nil?
       if @user.priviliges['view_states_log']
@@ -46,15 +65,16 @@ class HttpService < Sinatra::Base
         body StateLogConsultor.all
       else
         status 203
-        body "Usted no tiene privilegios para este servicio"
+        body '{"error":"Usted no tiene privilegios para este servicio"}'
       end
     else
       status 203
-      body "Usuario no registrado"
+      body '{"error":"Usuario no registrado"}'
     end
   end
 
   get '/iam/*/with/*/want/users' do
+    content_type :json
     authenticate(params[:splat][0],params[:splat][1])
     unless @user.nil?
       if @user.priviliges['crud_users']
@@ -62,11 +82,28 @@ class HttpService < Sinatra::Base
         body UserConsultor.all
       else
         status 203
-        body "Usted no tiene privilegios para este servicio"
+        body '{"error":"Usted no tiene privilegios para este servicio"}'
       end
     else
       status 203
-      body "Usuario no registrado"
+      body '{"error":"Usuario no registrado"}'
+    end
+  end
+
+  get '/iam/*/with/*/want/online_users' do
+    content_type :json
+    authenticate(params[:splat][0],params[:splat][1])
+    unless @user.nil?
+      if @user.priviliges['crud_users']
+        status 200
+        body UserConsultor.online_users
+      else
+        status 203
+        body '{"error":"Usted no tiene privilegios para este servicio"}'
+      end
+    else
+      status 203
+      body '{"error":"Usuario no registrado"}'
     end
   end
 

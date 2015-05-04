@@ -11,4 +11,13 @@ class NotifyActioner
     socket.puts(message)
     socket.close
   end
+
+  def broadcast(message)
+    address = "192.168.0.255"
+    port = 3000
+    socket = UDPSocket.open
+    socket.setsockopt(Socket::SOL_SOCKET,Socket::SO_BROADCAST, true)
+    socket.send(message,0,address,port)
+    socket.close
+  end
 end   

@@ -1,7 +1,34 @@
+require 'json'
+
 class UserConsultor
 
+  @@FILE = '/next_key_data/users.json'
+
   def self.all
-    IO.readlines("/next_key_data/users.csv")
+    result='['
+    unless(File.zero?(@@FILE))
+      File.open(@@FILE, 'r') do |file|
+        file.each_line do |line|
+          result += "#{line},"
+        end
+        result = result[0...-1]
+      end
+    end
+    result += ']'
+  end
+
+  def self.online_users
+    users_status_file = '/next_key_data/online_users.json'
+    result='['
+    unless(File.zero?(users_status_file))
+      File.open(users_status_file, 'r') do |file|
+        file.each_line do |line|
+          result += "#{line},"
+        end
+        result = result[0...-1]
+      end
+    end
+    result += ']'
   end
 
   def self.authenticate(username,password)
@@ -10,17 +37,18 @@ class UserConsultor
                  'SUPERVISOR' => Supervisor.new(username,password),
                  'ADMIN' => Admin.new(username,password)}
 
-    result = nil
-    File.open("/next_key_data/users.csv", 'r') do |file| 
+    user = nil
+    File.open(@@FILE, 'r') do |file| 
       file.each_line do |line|
-        user_data = line.split(',')
-        if (user_data[0].eql? username and user_data[1].eql? password)
-          result = user_type[user_data[2].delete("\n")]         
+        user_data = JSON.parse(line)
+        if ("#{user_data["dni"]}@#{user_data["empresa"]}" == username and user_data["password"] == password)
+          user = user_type[user_data["priviliges"]]
+          user.empresa = user_data["empresa"]   
+          user.area = user_data["area"]   
+          return user
         end
       end
     end
-    p result
-    result
+    user
   end
-  
 end

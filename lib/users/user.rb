@@ -1,6 +1,6 @@
 class User
 
-  attr_accessor :username, :password
+  attr_accessor :empresa, :area
   attr_reader :priviliges
 
   def initialize(a_username,a_password)
@@ -11,7 +11,18 @@ class User
     set_priviliges
   end
 
+  def to_json
+    data = {"username":@username,"password":@password,"empresa":@empresa,"area":@area}
+    data.to_json
+  end
+
+  def are_you?(a_username,a_password)
+  
+     @username.eql?(a_username) and @password.eql?(a_password)
+  end
+
   private
+
   def set_priviliges
     crud_users
     view_states_log

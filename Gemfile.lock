@@ -16,6 +16,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.2.0)
     rspec-support (3.2.1)
+    snmp (1.2.0)
 
 PLATFORMS
   ruby
@@ -23,3 +24,4 @@ PLATFORMS
 DEPENDENCIES
   require_all
   rspec
+  snmp
