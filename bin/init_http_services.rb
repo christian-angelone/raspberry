@@ -6,6 +6,7 @@ require_all 'lib'
 class HttpService < Sinatra::Base
 
   set :bind, '0.0.0.0'
+  set :server, :puma
 
   def authenticate(a_username,a_password)
     @user =  UserConsultor.authenticate(a_username,a_password)
@@ -35,9 +36,12 @@ class HttpService < Sinatra::Base
     content_type :json
     authenticate(params[:splat][0],params[:splat][1])
     unless @user.nil?
-      @device ||= Device.new('192.168.0.55')
-      @device.pulse
+        Thread.new do
+          device ||= Device.new('192.168.0.55')
+          device.pulse
+        end
       status 200
+      body '{"message":"OK"}'
     else
       status 203
       body '{"error":"usuario no registrado"}'

@@ -42,5 +42,5 @@ unless result_given == result
  # notifier.send(final_message.to_json)
   notifier.broadcast(final_message.to_json)  
 end
-sleep 1
+sleep 0.5
 end
