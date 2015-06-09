@@ -1,6 +1,6 @@
 class User
 
-  attr_accessor :empresa, :area
+  attr_accessor :empresa, :area, :state
   attr_reader :priviliges
 
   def initialize(a_username,a_password)

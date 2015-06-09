@@ -30,7 +30,20 @@ class HttpService < Sinatra::Base
       status 401
       body '{"error":"usuario y/o password incorrectos"}'
     end
-   end
+  end
+
+	post '/iam/*/with/*/update/user_state' do
+		authenticate(params[:splat][0],params[:splat][1])
+    unless @user.nil?
+      data = JSON.parse(request.body.read)
+      p data
+      dni = params[:splat][0].split('@').first
+      UserActioner.update_state(dni,data['state'])
+      status 200
+		else
+			status 500
+		end
+	end
 
   get '/iam/*/with/*/do/pulse' do
     content_type :json

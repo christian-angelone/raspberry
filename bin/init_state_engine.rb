@@ -14,9 +14,13 @@ notifier = NotifyActioner.new(ip:'192.168.0.30',port:'7070')
 
 device = Device.new('192.168.0.55',a_port: 161)
 
-initial_state = device.state
+begin
+	@initial_state = device.state
+rescue
+	retry
+end
 
-engine = StateEngine.new(states[[initial_state[:relay1],initial_state[:input1]]],keep: true)
+engine = StateEngine.new(states[[@initial_state[:relay1],@initial_state[:input1]]],keep: true)
 result = nil
 
 host_ip = Socket.ip_address_list.detect{|intf| intf.ipv4_private?}.ip_address
@@ -24,9 +28,12 @@ host_ip = Socket.ip_address_list.detect{|intf| intf.ipv4_private?}.ip_address
 iterations = 0
 while(true)
 iterations += 1
-actual_state = device.state
-
-result_given = engine.change_to(states[[actual_state[:relay1],actual_state[:input1]]])
+begin
+	@actual_state = device.state
+rescue
+	retry
+end
+result_given = engine.change_to(states[[@actual_state[:relay1],@actual_state[:input1]]])
 p result_given.message + "(#{iterations})"
 
 unless result_given == result
@@ -36,7 +43,7 @@ unless result_given == result
   final_message = { host: host_ip,
                     date: Time.now.strftime("%d/%m/%Y %H:%M"),
                     status:  result.message,
-                  }.merge(actual_state)
+                  }.merge(@actual_state)
   
   log_actioner.write(final_message.to_json)
  # notifier.send(final_message.to_json)

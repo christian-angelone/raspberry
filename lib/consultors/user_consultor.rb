@@ -45,7 +45,8 @@ class UserConsultor
           user = user_type[user_data["priviliges"]]
           user.empresa = user_data["empresa"]   
           user.area = user_data["area"]   
-          return user
+          user.state = user_data["state"] 
+					return user
         end
       end
     end
