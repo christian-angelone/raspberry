@@ -1,6 +1,6 @@
 class StateEngine
 
-  def initialize(state,keep: false)
+  def initialize(state,keep)
     @actual_state = state
     @keep = keep
   end

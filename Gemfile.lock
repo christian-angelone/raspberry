@@ -1,7 +1,13 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    daemons (1.2.2)
     diff-lcs (1.2.5)
+    puma (2.11.3)
+      rack (>= 1.1, < 2.0)
+    rack (1.6.2)
+    rack-protection (1.5.3)
+      rack
     require_all (1.3.2)
     rspec (3.2.0)
       rspec-core (~> 3.2.0)
@@ -16,12 +22,23 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.2.0)
     rspec-support (3.2.1)
+    sinatra (1.4.6)
+      rack (~> 1.4)
+      rack-protection (~> 1.4)
+      tilt (>= 1.3, < 3)
     snmp (1.2.0)
+    tilt (2.0.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  daemons
+  puma
   require_all
   rspec
+  sinatra
   snmp
+
+BUNDLED WITH
+   1.10.4

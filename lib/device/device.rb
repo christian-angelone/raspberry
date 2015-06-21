@@ -1,8 +1,8 @@
 class Device
 
-  def initialize(an_ip,a_port: 161)
+  def initialize(an_ip)
 
-      @protocol = SNMP_Protocol.new(an_ip) #.3.3.0
+      @protocol = SNMP_Protocol.new(an_ip,161) #.3.3.0
       @nodes = [ '1.3.6.1.4.1.38783.3.3.0',
                  '1.3.6.1.4.1.38783.3.5.0',
                  '1.3.6.1.4.1.38783.3.1.0',

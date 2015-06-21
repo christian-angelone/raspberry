@@ -1,7 +1,5 @@
 require 'sinatra/base'
 require 'json'
-require 'require_all'
-require_all 'lib'
 
 class HttpService < Sinatra::Base
 
@@ -23,7 +21,6 @@ class HttpService < Sinatra::Base
     content_type :json
     authenticate(params[:splat][0],params[:splat][1])
     unless @user.nil?  
-      UserActioner.set_online(params[:splat][0],request.ip)
       status 200
       body @user.to_json
     else
@@ -50,7 +47,7 @@ class HttpService < Sinatra::Base
     authenticate(params[:splat][0],params[:splat][1])
     unless @user.nil?
         Thread.new do
-          device ||= Device.new('192.168.0.55')
+          device ||= Device.new('192.168.1.181')
           device.pulse
         end
       status 200
@@ -97,23 +94,6 @@ class HttpService < Sinatra::Base
       if @user.priviliges['crud_users']
         status 200
         body UserConsultor.all
-      else
-        status 203
-        body '{"error":"Usted no tiene privilegios para este servicio"}'
-      end
-    else
-      status 203
-      body '{"error":"Usuario no registrado"}'
-    end
-  end
-
-  get '/iam/*/with/*/want/online_users' do
-    content_type :json
-    authenticate(params[:splat][0],params[:splat][1])
-    unless @user.nil?
-      if @user.priviliges['crud_users']
-        status 200
-        body UserConsultor.online_users
       else
         status 203
         body '{"error":"Usted no tiene privilegios para este servicio"}'
