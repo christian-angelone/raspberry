@@ -1,5 +1,7 @@
 require 'sinatra/base'
 require 'json'
+#require 'require_all'
+#require_all 'lib'
 
 class HttpService < Sinatra::Base
 

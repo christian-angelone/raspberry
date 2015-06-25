@@ -12,7 +12,7 @@ class SNMP_Protocol
     Integer32.new(integer)
   end
 
-  def initialize(an_ip,a_por)
+  def initialize(an_ip,a_port)
     @ip = an_ip
     @port = a_port
   end

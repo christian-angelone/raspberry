@@ -1,4 +1,6 @@
 require 'json'
+#require 'require_all'
+#require_all 'lib'
 
 states = {
            ['0','0'] => StateOffOff.new,
@@ -10,7 +12,7 @@ states = {
 log_actioner = StateLogActioner.new
 notifier = NotifyActioner.new(ip:'192.168.0.247',port:'7070')
 
-device = Device.new('192.168.1.181',a_port: 161)
+device = Device.new('192.168.1.181')
 
 begin
 	@initial_state = device.state

@@ -12,7 +12,7 @@ class User
   end
 
   def to_json
-    data = {"username":@username,"password":@password,"empresa":@empresa,"area":@area}
+    data = {"username" => @username,"password" => @password,"empresa" => @empresa,"area" => @area}
     data.to_json
   end
 
