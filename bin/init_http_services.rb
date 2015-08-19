@@ -1,12 +1,15 @@
 require 'sinatra/base'
 require 'json'
-#require 'require_all'
-#require_all 'lib'
+
+Dir["/home/pi/code/raspberry/lib/users/*.rb"].each {|file| require file }
+Dir["/home/pi/code/raspberry/lib/device/*.rb"].each {|file| require file }
+Dir["/home/pi/code/raspberry/lib/actioners/*.rb"].each {|file| require file }
+Dir["/home/pi/code/raspberry/lib/consultors/*.rb"].each {|file| require file }
 
 class HttpService < Sinatra::Base
 
   set :bind, '0.0.0.0'
-  set :server, :unicorn
+  set :server, :puma
 
   def authenticate(a_username,a_password)
     @user =  UserConsultor.authenticate(a_username,a_password)
@@ -105,4 +108,6 @@ class HttpService < Sinatra::Base
       body '{"error":"Usuario no registrado"}'
     end
   end
+
+  run! if app_file == $0
 end
