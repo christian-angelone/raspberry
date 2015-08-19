@@ -6,7 +6,7 @@ require 'json'
 class HttpService < Sinatra::Base
 
   set :bind, '0.0.0.0'
-  set :server, :puma
+  set :server, :unicorn
 
   def authenticate(a_username,a_password)
     @user =  UserConsultor.authenticate(a_username,a_password)
@@ -31,18 +31,18 @@ class HttpService < Sinatra::Base
     end
   end
 
-	post '/iam/*/with/*/update/user_state' do
-		authenticate(params[:splat][0],params[:splat][1])
+  post '/iam/*/with/*/update/user_state' do
+    authenticate(params[:splat][0],params[:splat][1])
     unless @user.nil?
       data = JSON.parse(request.body.read)
       p data
       dni = params[:splat][0].split('@').first
       UserActioner.update_state(dni,data['state'])
       status 200
-		else
-			status 500
-		end
-	end
+    else
+      status 500
+    end
+  end
 
   get '/iam/*/with/*/do/pulse' do
     content_type :json
@@ -105,6 +105,4 @@ class HttpService < Sinatra::Base
       body '{"error":"Usuario no registrado"}'
     end
   end
-
-  run! if app_file == $0
 end
